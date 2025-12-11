@@ -1,5 +1,5 @@
 blueprint:
-  name: "Abrir App da TV TCL via Alexa Devices V2"
+  name: "Abrir App da TV TCL via Alexa Devices V4"
   description: "Abre aplicativos (YouTube, Netflix, Prime Video, Premiere) na TV TCL/Google TV usando Alexa Devices (send_text_command)."
   domain: script
 
@@ -26,23 +26,33 @@ fields:
             value: premiere
 
   alexa_notify:
-    name: "Dispositivo Alexa (Speak)"
-    description: "Entidade notify do dispositivo Alexa que enviará o comando."
+    name: "Dispositivo Alexa (SOMENTE Speak)"
+    description: "Selecione o notify de SPEAK do dispositivo Alexa."
     required: true
     selector:
       entity:
-        multiple: false
-        filter:
-          - domain: notify
-            integration: alexa_devices
-            entity_id: "*speak*"
+        domain: notify
+        integration: alexa_devices
+
 sequence:
 
+  # Validação para impedir o uso de Announce
+  - choose:
+      - conditions: "{{ 'announce' in alexa_notify }}"
+        sequence:
+          - action: persistent_notification.create
+            data:
+              title: "Erro no Blueprint"
+              message: "Selecione apenas entidades Alexa do tipo SPEAK, não ANNOUNCE."
+          - stop: "Entidade inválida — use somente notify.xxx_speak"
+
+  # Ajustes internos
   - variables:
       selected_entity: "{{ alexa_notify }}"
       alexa_device_id: "{{ device_id(selected_entity) }}"
       chosen_app: "{{ app }}"
 
+  # Execuções por aplicativo
   - choose:
 
       - conditions: "{{ chosen_app == 'youtube' }}"
@@ -57,7 +67,7 @@ sequence:
           - action: alexa_devices.send_text_command
             data:
               device_id: "{{ alexa_device_id }}"
-              text_command: 'Abrir Netflix Smart TV'
+              text_command: "Abrir Netflix Smart TV"
 
       - conditions: "{{ chosen_app == 'prime' }}"
         sequence:
