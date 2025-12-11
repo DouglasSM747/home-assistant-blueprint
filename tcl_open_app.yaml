@@ -1,0 +1,69 @@
+blueprint:
+  name: "Abrir App da TV TCL via Alexa Devices"
+  description: "Abre aplicativos da TV TCL usando dispositivos Alexa via send_text_command."
+  domain: script
+
+mode: queued
+icon: mdi:television
+
+fields:
+
+  app:
+    name: "Aplicativo"
+    description: "Escolha qual app abrir na TV TCL."
+    required: true
+    selector:
+      select:
+        options:
+          - YouTube
+          - Netflix
+          - Prime Video
+          - Premiere
+
+  onde_enviar:
+    name: "Dispositivo Alexa"
+    description: "Entidade notify do dispositivo Alexa que enviará o comando."
+    required: true
+    selector:
+      entity:
+        multiple: false
+        filter:
+          - domain: notify
+            integration: alexa_devices
+
+sequence:
+
+  - variables:
+      selected_entity: "{{ onde_enviar }}"
+      alexa_device_id: "{{ device_id(selected_entity) }}"
+      chosen_app: "{{ app }}"
+
+  - choose:
+
+      - conditions: "{{ chosen_app == 'YouTube' }}"
+        sequence:
+          - action: alexa_devices.send_text_command
+            data:
+              device_id: "{{ alexa_device_id }}"
+              text_command: "Abrir YouTube Smart TV"
+
+      - conditions: "{{ chosen_app == 'Netflix' }}"
+        sequence:
+          - action: alexa_devices.send_text_command
+            data:
+              device_id: "{{ alexa_device_id }}"
+              text_command: "Abrir Netflix Smart TV"
+
+      - conditions: "{{ chosen_app == 'Prime Video' }}"
+        sequence:
+          - action: alexa_devices.send_text_command
+            data:
+              device_id: "{{ alexa_device_id }}"
+              text_command: "Abrir Prime Video Smart TV"
+
+      - conditions: "{{ chosen_app == 'Premiere' }}"
+        sequence:
+          - action: alexa_devices.send_text_command
+            data:
+              device_id: "{{ alexa_device_id }}"
+              text_command: "Abrir Premiere Smart TV"
