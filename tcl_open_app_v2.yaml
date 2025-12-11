@@ -1,5 +1,5 @@
 blueprint:
-  name: "Abrir App da TV TCL via Alexa Devices"
+  name: "Abrir App da TV TCL via Alexa Devices V2"
   description: "Abre aplicativos (YouTube, Netflix, Prime Video, Premiere) na TV TCL/Google TV usando Alexa Devices (send_text_command)."
   domain: script
 
@@ -27,7 +27,7 @@ fields:
 
   alexa_notify:
     name: "Dispositivo Alexa (Speak)"
-    description: "Entidade notify do dispositivo Alexa que enviará o texto de comando."
+    description: "Entidade notify do dispositivo Alexa que enviará o comando."
     required: true
     selector:
       entity:
@@ -35,7 +35,7 @@ fields:
         filter:
           - domain: notify
             integration: alexa_devices
-
+            entity_id: "*speak*"
 sequence:
 
   - variables:
