@@ -1,6 +1,6 @@
 blueprint:
   name: "Abrir App da TV TCL via Alexa Devices"
-  description: "Abre aplicativos da TV TCL usando dispositivos Alexa via send_text_command."
+  description: "Abre aplicativos (YouTube, Netflix, Prime Video, Premiere) na TV TCL/Google TV usando Alexa Devices (send_text_command)."
   domain: script
 
 mode: queued
@@ -14,15 +14,20 @@ fields:
     required: true
     selector:
       select:
+        multiple: false
         options:
-          - YouTube
-          - Netflix
-          - Prime Video
-          - Premiere
+          - label: "YouTube"
+            value: youtube
+          - label: "Netflix"
+            value: netflix
+          - label: "Prime Video"
+            value: prime
+          - label: "Premiere"
+            value: premiere
 
-  onde_enviar:
-    name: "Dispositivo Alexa"
-    description: "Entidade notify do dispositivo Alexa que enviará o comando."
+  alexa_notify:
+    name: "Dispositivo Alexa (Speak)"
+    description: "Entidade notify do dispositivo Alexa que enviará o texto de comando."
     required: true
     selector:
       entity:
@@ -34,34 +39,34 @@ fields:
 sequence:
 
   - variables:
-      selected_entity: "{{ onde_enviar }}"
+      selected_entity: "{{ alexa_notify }}"
       alexa_device_id: "{{ device_id(selected_entity) }}"
       chosen_app: "{{ app }}"
 
   - choose:
 
-      - conditions: "{{ chosen_app == 'YouTube' }}"
+      - conditions: "{{ chosen_app == 'youtube' }}"
         sequence:
           - action: alexa_devices.send_text_command
             data:
               device_id: "{{ alexa_device_id }}"
               text_command: "Abrir YouTube Smart TV"
 
-      - conditions: "{{ chosen_app == 'Netflix' }}"
+      - conditions: "{{ chosen_app == 'netflix' }}"
         sequence:
           - action: alexa_devices.send_text_command
             data:
               device_id: "{{ alexa_device_id }}"
-              text_command: "Abrir Netflix Smart TV"
+              text_command: 'Abrir Netflix Smart TV'
 
-      - conditions: "{{ chosen_app == 'Prime Video' }}"
+      - conditions: "{{ chosen_app == 'prime' }}"
         sequence:
           - action: alexa_devices.send_text_command
             data:
               device_id: "{{ alexa_device_id }}"
               text_command: "Abrir Prime Video Smart TV"
 
-      - conditions: "{{ chosen_app == 'Premiere' }}"
+      - conditions: "{{ chosen_app == 'premiere' }}"
         sequence:
           - action: alexa_devices.send_text_command
             data:
