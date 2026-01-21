@@ -39,6 +39,6 @@ trigger:
 action:
   - service: mqtt.publish
     data:
-      topic: !input mqtt_topic
+      topic: esp32/notify
       payload: >
-        {{ !input target_id }}|{{ states(!input message_text) }}
+        {{ '0|' ~ states(message_text) }}
