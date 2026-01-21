@@ -1,6 +1,6 @@
 blueprint:
   name: ESP32 MQTT Reminder
-  description: Envia lembretes via MQTT para ESP32 usando Schedule + Input Text
+  description: Envia lembretes via MQTT para ESP32 usando Schedule
   domain: automation
 
   input:
@@ -11,10 +11,9 @@ blueprint:
           domain: schedule
 
     message_text:
-      name: Mensagem
+      name: Mensagem do lembrete
       selector:
-        entity:
-          domain: input_text
+        text:
 
     mqtt_topic:
       name: Tópico MQTT
@@ -39,6 +38,6 @@ trigger:
 action:
   - service: mqtt.publish
     data:
-      topic: esp32/notify
+      topic: !input mqtt_topic
       payload: >
-        {{ '0|' ~ states(message_text) }}
+        {{ blueprint.input.target_id ~ '|' ~ blueprint.input.message_text }}
