@@ -1,29 +1,20 @@
 blueprint:
-  name: ESP32 MQTT Reminder V4
-  description: Envia lembretes via MQTT para ESP32 usando Schedule
+  name: ESP32 MQTT Reminder
   domain: automation
 
   input:
     schedule_entity:
-      name: Schedule
       selector:
         entity:
           domain: schedule
 
-    message_text:
-      name: Mensagem do lembrete
-      selector:
-        text:
-
     mqtt_topic:
-      name: Tópico MQTT
       default: esp32/notify
       selector:
         text:
 
-    target_id:
-      name: ID do dispositivo (0 = broadcast)
-      default: "0"
+    payload:
+      name: Payload MQTT (string final)
       selector:
         text:
 
@@ -39,5 +30,4 @@ action:
   - service: mqtt.publish
     data:
       topic: !input mqtt_topic
-      payload: >
-        {{ ( !input target_id ) ~ '|' ~ ( !input message_text ) }}
+      payload: !input payload
